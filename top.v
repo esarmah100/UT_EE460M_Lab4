@@ -29,4 +29,22 @@ module top(
     output [6:0] seg
     );
     
+    wire [15:0] count;
+    
+    meter m1(
+        .clk        (clk),
+        .buttons    (buttons),
+        .reset      (sw),
+        .count      (count)
+    );
+
+    sevenseg ss (
+        .clk                (clk),
+        .reset              (sw),
+        .current_count      (count),
+        .an                 (an),
+        .seg                (seg)
+    ); 
+    
+    
 endmodule
