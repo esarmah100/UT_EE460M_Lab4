@@ -35,7 +35,7 @@ module meter(
     button_debounce right_button(clk, buttons[2], right);
     button_debounce down_button(clk, buttons[3], down);
 
-    clk_divider #(COUNT = 100000000) second_clk_mod (clk, second_clk);
+    clk_divider #(.COUNT(100000000)) second_clk_mod (clk, second_clk);
 
     initial begin
         count = 0;
