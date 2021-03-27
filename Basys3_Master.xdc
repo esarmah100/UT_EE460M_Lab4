@@ -4,16 +4,16 @@
 ## - rename the used ports (in each line, after get_ports) according to the top level signal names in the project
 
 ## Clock signal
-#set_property PACKAGE_PIN W5 [get_ports clk]							
-	#set_property IOSTANDARD LVCMOS33 [get_ports clk]
-	#create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
+set_property PACKAGE_PIN W5 [get_ports clk]							
+	set_property IOSTANDARD LVCMOS33 [get_ports clk]
+	create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
  
 ## Switches
-# set_property PACKAGE_PIN V17 [get_ports {A[0]}]					
-# 	set_property IOSTANDARD LVCMOS33 [get_ports {A[0]}]
-# set_property PACKAGE_PIN V16 [get_ports {A[1]}]					
-# 	set_property IOSTANDARD LVCMOS33 [get_ports {A[1]}]
-# set_property PACKAGE_PIN W16 [get_ports {A[2]}]					
+ set_property PACKAGE_PIN V17 [get_ports {sw[0]}]					
+ 	set_property IOSTANDARD LVCMOS33 [get_ports {sw[0]}]
+ set_property PACKAGE_PIN V16 [get_ports {sw[0]}]					
+ 	set_property IOSTANDARD LVCMOS33 [get_ports {sw[1]}]
+ set_property PACKAGE_PIN W16 [get_ports {sw[1]}]					
 # 	set_property IOSTANDARD LVCMOS33 [get_ports {A[2]}]
 # set_property PACKAGE_PIN W17 [get_ports {A[3]}]					
 # 	set_property IOSTANDARD LVCMOS33 [get_ports {A[3]}]
@@ -296,4 +296,3 @@ set_property PACKAGE_PIN U17 [get_ports {buttons[3]}]
 	#set_property IOSTANDARD LVCMOS33 [get_ports {QspiDB[3]}]
 #set_property PACKAGE_PIN K19 [get_ports QspiCSn]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports QspiCSn]
-
