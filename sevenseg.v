@@ -52,18 +52,10 @@ always @(posedge clk) begin
     count <= count + 1;
     seg <= out_count;
 
-    if(reset[0]) begin // Synchronous reset
-        bcd_count <= 10;// Set outputs
+    if(reset) begin // Synchronous reset
         an_buf <= 4'b1110;
         next <= 0;// set next state
-        end
-        
-    else if(reset[1])begin // Synchronous reset
-        bcd_count <= 205;// Set outputs
-        an_buf <= 4'b1110;
-        next <= 0;// set next state
-        end
-        
+    end     
     else begin
         case(current)
         0: begin // state 0   
