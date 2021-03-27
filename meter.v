@@ -35,6 +35,8 @@ module meter(
     button_debounce right_button(clk, buttons[2], right);
     button_debounce down_button(clk, buttons[3], down);
 
+    reg [15:0]new_count = 0;
+
     clk_divider #(.COUNT(100000000)) second_clk_mod (clk, second_clk);
 
     initial begin
@@ -42,13 +44,19 @@ module meter(
     end
 
     always @(posedge second_clk) begin
-        if(count > 0)begin
-            count <= count - 1;
+        if(new_count > 0)begin
+            new_count <= new_count - 1;
         end
     end
 
     always @(posedge clk) begin
-        if(up)begin
+        if(reset[0])begin
+            count <= 10;
+        end
+        else if(reset[1])begin
+            count <= 205;
+        end
+        else if(up)begin
             count <= count + 10;
         end
         else if(left)begin
@@ -60,12 +68,8 @@ module meter(
         else if(down)begin
             count <= count + 550;
         end
-
-        if(reset[0])begin
-            count <= 10;
-        end
-        else if(reset[1])begin
-            count <= 205;
+        else begin
+            count <= new_count;
         end
 
     end
