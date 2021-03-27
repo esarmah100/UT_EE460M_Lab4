@@ -22,7 +22,7 @@
 
 module top(
     input clk,
-    input [3:0] button,
+    input [3:0] buttons,
     input [1:0] sw,
     
     output [3:0] an,
