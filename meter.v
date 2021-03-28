@@ -35,18 +35,13 @@ module meter(
     button_debounce right_button(clk, buttons[2], right);
     button_debounce down_button(clk, buttons[3], down);
 
-    reg [15:0]new_count = 0;
+    wire decrement;
 
     clk_divider #(.COUNT(100000000)) second_clk_mod (clk, second_clk);
+    button_debounce second_pulse(clk, second_clk, decrement);
 
     initial begin
         count = 0;
-    end
-
-    always @(posedge second_clk) begin
-        if(new_count > 0)begin
-            new_count <= new_count - 1;
-        end
     end
 
     always @(posedge clk) begin
@@ -69,7 +64,9 @@ module meter(
             count <= count + 550;
         end
         else begin
-            count <= new_count;
+            if(count > 0)begin
+                count <= count - decrement;
+            end
         end
 
     end
