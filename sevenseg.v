@@ -58,25 +58,83 @@ always @(posedge clk) begin
     end     
     else begin
         case(current)
-        0: begin // state 0   
-                //bcd input for count
-                bcd_count <= ((current_count % 1000) % 100) % 10;
-                an_buf <= 4'b1110; 
-                next <= 1; // set next state
+        0: begin // state 0  
+        
+                if(current_count < 200) begin 
+                    if(current_count % 2 != 0) begin
+                        an_buf <= 4'b1111;
+                        next <= 1;
+                    end
+                    
+                    else begin
+                        bcd_count <= ((current_count % 1000) % 100) % 10;
+                        an_buf <= 4'b1110; 
+                        next <= 1; // set next state
+                    end
+                end 
+                
+                else begin
+                    //bcd input for count
+                    bcd_count <= ((current_count % 1000) % 100) % 10;
+                    an_buf <= 4'b1110; 
+                    next <= 1; // set next state
+                end
             end
         1: begin // state 1
-                //bcd input for count
-                bcd_count <= ((current_count % 1000) % 100)/10;           
-                an_buf <= 4'b1101;
-                next <= 2;
+        
+                if(current_count < 200) begin 
+                    if(current_count % 2 != 0) begin
+                        an_buf <= 4'b1111;
+                        next <= 2;
+                    end
+                    
+                    else begin
+                        bcd_count <= ((current_count % 1000) % 100)/10;  
+                        an_buf <= 4'b1101; 
+                        next <= 2;
+                    end
+                end 
+                
+                else begin
+                    //bcd input for count
+                    bcd_count <= ((current_count % 1000) % 100)/10;           
+                    an_buf <= 4'b1101;
+                    next <= 2;
+                end
             end
         2:begin
+                
+                if(current_count < 200) begin 
+                    if(current_count % 2 != 0) begin
+                        an_buf <= 4'b1111;
+                        next <= 3;
+                    end
+                    
+                    else begin
+                        bcd_count <= (current_count % 1000)/100;  
+                        an_buf <= 4'b1011; 
+                        next <= 3;
+                    end
+                end 
+                
                 //bcd input for count
                 bcd_count <= (current_count % 1000)/100;
                 an_buf <= 4'b1011;
                 next <= 3;
             end
         3:begin
+                if(current_count < 200) begin 
+                    if(current_count % 2 != 0) begin
+                        an_buf <= 4'b1111;
+                        next <= 0;
+                    end
+                    
+                    else begin
+                        bcd_count <= (current_count % 10000)/1000;
+                        an_buf <= 4'b0111; 
+                        next <= 0;
+                    end
+                end 
                 //bcd input for count
                 bcd_count <= (current_count % 10000)/1000;
                 an_buf <= 4'b0111;
