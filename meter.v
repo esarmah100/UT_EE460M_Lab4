@@ -69,6 +69,10 @@ module meter(
             end
         end
 
+        if(count > 9999)begin
+            count <= 9999;
+        end
+
     end
 
     
