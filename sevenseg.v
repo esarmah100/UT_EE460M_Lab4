@@ -28,6 +28,13 @@ module sevenseg(
   output reg [6:0] seg
 ); 
 
+wire half_second_clk, half_second;
+
+clk_divider #(.COUNT(50000000)) half_second_clk_mod (clk, half_second_clk);
+debounce_and_single_pulse half_second_pulse(clk, half_second_clk, half_second);
+
+reg on0 = 1;
+
 wire [6:0] out_count;
 
 // BCD instantiation
@@ -52,6 +59,10 @@ always @(posedge clk) begin
     count <= count + 1;
     seg <= out_count;
 
+    if(half_second) begin
+        on0 <= on0 ^ 1;
+    end
+
     if(reset) begin // Synchronous reset
         an_buf <= 4'b1110;
         next <= 0;// set next state
@@ -59,92 +70,90 @@ always @(posedge clk) begin
     else begin
         case(current)
         0: begin // state 0  
-        
-                if(current_count < 200) begin 
-                    if(current_count % 2 != 0) begin
-                        an_buf <= 4'b1111;
-                        next <= 1;
-                    end
-                    
-                    else begin
-                        bcd_count <= ((current_count % 1000) % 100) % 10;
+                if(!current_count) begin
+                    if(on0)
                         an_buf <= 4'b1110; 
-                        next <= 1; // set next state
-                    end
-                end 
-                
-                else begin
-                    //bcd input for count
-                    bcd_count <= ((current_count % 1000) % 100) % 10;
-                    an_buf <= 4'b1110; 
-                    next <= 1; // set next state
+                    else
+                        an_buf <= 4'b1111; 
                 end
+                else if(current_count < 200) begin 
+                    if(current_count % 2 != 0)
+                        an_buf <= 4'b1111;
+                    else
+                        an_buf <= 4'b1110;
+                end 
+                else begin
+                    an_buf <= 4'b1110; 
+                end
+
+                //bcd input for count
+                bcd_count <= ((current_count % 1000) % 100) % 10;
+                next <= 1; // set next state
             end
         1: begin // state 1
-        
-                if(current_count < 200) begin 
-                    if(current_count % 2 != 0) begin
-                        an_buf <= 4'b1111;
-                        next <= 2;
-                    end
-                    
-                    else begin
-                        bcd_count <= ((current_count % 1000) % 100)/10;  
+                if(!current_count) begin
+                    if(on0)
                         an_buf <= 4'b1101; 
-                        next <= 2;
-                    end
+                    else
+                        an_buf <= 4'b1111; 
+                end
+                else if(current_count < 200) begin 
+                    if(current_count % 2 != 0)
+                        an_buf <= 4'b1111;
+                    else
+                        an_buf <= 4'b1101; 
                 end 
                 
-                else begin
-                    //bcd input for count
-                    bcd_count <= ((current_count % 1000) % 100)/10;           
+                else begin        
                     an_buf <= 4'b1101;
-                    next <= 2;
                 end
+
+                //bcd input for count
+                bcd_count <= ((current_count % 1000) % 100)/10;  
+                next <= 2;
             end
         2:begin
-                
-                if(current_count < 200) begin 
-                    if(current_count % 2 != 0) begin
-                        an_buf <= 4'b1111;
-                        next <= 3;
-                    end
-                    
-                    else begin
-                        bcd_count <= (current_count % 1000)/100;  
+                if(!current_count) begin
+                    if(on0)
                         an_buf <= 4'b1011; 
-                        next <= 3;
-                    end
+                    else
+                        an_buf <= 4'b1111; 
+                end
+                else if(current_count < 200) begin 
+                    if(current_count % 2 != 0)
+                        an_buf <= 4'b1111;
+                    else
+                        an_buf <= 4'b1011; 
+                end 
+                else begin
+                    an_buf <= 4'b1011;
                 end 
 
-                else begin
-                    //bcd input for count
-                    bcd_count <= (current_count % 1000)/100;
-                    an_buf <= 4'b1011;
-                    next <= 3;
-                end 
+                //bcd input for count
+                bcd_count <= (current_count % 1000)/100;
+                next <= 3;
             end
         3:begin
-                if(current_count < 200) begin 
-                    if(current_count % 2 != 0) begin
-                        an_buf <= 4'b1111;
-                        next <= 0;
-                    end
-                    
-                    else begin
-                        bcd_count <= (current_count % 10000)/1000;
-                        an_buf <= 4'b0111; 
-                        next <= 0;
-                    end
-                end 
-
-                else begin
-                    //bcd input for count
-                    bcd_count <= (current_count % 10000)/1000;
-                    an_buf <= 4'b0111;
-                    next <= 0;
-                end
+            if(!current_count) begin
+                if(on0)
+                    an_buf <= 4'b0111; 
+                else
+                    an_buf <= 4'b1111; 
             end
+            else if(current_count < 200) begin 
+                if(current_count % 2 != 0)
+                    an_buf <= 4'b1111;
+                else
+                    an_buf <= 4'b0111; 
+            end 
+            else begin
+                an_buf <= 4'b0111;
+            end
+
+            //bcd input for count
+            bcd_count <= (current_count % 10000)/1000;
+            next <= 0;
+        end
         default: begin
             //bcd input for step count
             bcd_count <= 4'd0000;
