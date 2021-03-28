@@ -116,11 +116,13 @@ always @(posedge clk) begin
                         next <= 3;
                     end
                 end 
-                
-                //bcd input for count
-                bcd_count <= (current_count % 1000)/100;
-                an_buf <= 4'b1011;
-                next <= 3;
+
+                else begin
+                    //bcd input for count
+                    bcd_count <= (current_count % 1000)/100;
+                    an_buf <= 4'b1011;
+                    next <= 3;
+                end 
             end
         3:begin
                 if(current_count < 200) begin 
@@ -135,10 +137,13 @@ always @(posedge clk) begin
                         next <= 0;
                     end
                 end 
-                //bcd input for count
-                bcd_count <= (current_count % 10000)/1000;
-                an_buf <= 4'b0111;
-                next <= 0;
+
+                else begin
+                    //bcd input for count
+                    bcd_count <= (current_count % 10000)/1000;
+                    an_buf <= 4'b0111;
+                    next <= 0;
+                end
             end
         default: begin
             //bcd input for step count
